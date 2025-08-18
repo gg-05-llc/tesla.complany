@@ -1,3 +1,5 @@
+<!-- Add Tesla Logo at the top of the auth page and dashboard -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -60,6 +62,24 @@
       color: #333;
     }
 
+    .tesla-logo-bar {
+      width: 100%;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+    .tesla-logo-bar img {
+      width: 120px;
+      height: auto;
+      margin-top: 18px;
+      margin-bottom: 10px;
+    }
+    .tesla-logo-bar .company-name {
+      font-weight: bold;
+      font-size: 1.5em;
+      color: #cc0000;
+      letter-spacing: 2px;
+    }
+
     header {
       background-color: #cc0000;
       color: white;
@@ -71,29 +91,54 @@
       font-weight: bold;
     }
 
-    .auth-container {
-      max-width: 400px;
+    .auth-page {
+      max-width: 500px;
       margin: 50px auto;
       padding: 30px;
       border: 1px solid #ccc;
       border-radius: 8px;
       background-color: #f9f9f9;
+      box-shadow: 0px 0px 14px #eee;
     }
-
-    .auth-container h2 {
+    .auth-choice {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+    .auth-choice button {
+      width: 48%;
+      padding: 12px;
+      background-color: #cc0000;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .auth-section {
+      display: none;
+    }
+    .auth-section.active {
+      display: block;
+    }
+    .auth-section h2 {
       text-align: center;
       margin-bottom: 20px;
     }
-
-    .auth-container input {
+    .auth-section input {
       width: 100%;
       padding: 12px;
       margin: 10px 0;
       border: 1px solid #ccc;
       border-radius: 4px;
     }
-
-    .auth-container button {
+    .auth-section label {
+      display: block;
+      margin-top: 10px;
+      font-weight: bold;
+      color: #cc0000;
+    }
+    .auth-section button {
       width: 100%;
       padding: 12px;
       background-color: #cc0000;
@@ -102,74 +147,69 @@
       border-radius: 4px;
       font-size: 16px;
       cursor: pointer;
+      margin-top: 10px;
     }
-
-    .dashboard {
-      padding: 20px;
+    .spin-modal {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
     }
-
-    .banner {
-      background-color: #eee;
-      padding: 20px;
+    .spin-content {
+      background: #fff;
+      padding: 32px 24px;
+      border-radius: 12px;
       text-align: center;
-      margin-bottom: 30px;
-      border: 2px solid #cc0000;
-      border-radius: 8px;
+      box-shadow: 0 0 20px #cc0000;
+      max-width: 350px;
+      width: 95%;
+      animation: popin 0.5s;
     }
-
-    .banner h1 {
-      margin: 0;
-      font-size: 24px;
+    @keyframes popin {
+      from { transform: scale(0.7); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .spin-wheel {
+      margin: 18px auto;
+      width: 210px; height: 210px;
+      border-radius: 50%;
+      border: 6px solid #cc0000;
+      background: repeating-conic-gradient(
+        #ffe0e0 0deg 72deg, #fff 72deg 144deg, #ffe0e0 144deg 216deg, #fff 216deg 288deg, #ffe0e0 288deg 360deg
+      );
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: bold;
+      font-size: 1.2em;
+      color: #cc0000;
+      position: relative;
+    }
+    .spin-arrow {
+      position: absolute;
+      top: -26px; left: 50%; transform: translateX(-50%);
+      font-size: 2em;
       color: #cc0000;
     }
-
-    .banner button {
+    .spin-prize {
       margin-top: 15px;
-      padding: 12px 20px;
-      background-color: #cc0000;
-      color: white;
-      border: none;
+      font-size: 1.1em;
+      font-weight: bold;
+      color: #333;
+    }
+    .error-msg {
+      color: #cc0000;
+      background: #fff3f3;
       border-radius: 4px;
-      font-size: 16px;
-      cursor: pointer;
+      padding: 8px;
+      margin-bottom: 8px;
+      text-align: center;
+      font-size: 1em;
+      display: none;
     }
-
-    .gallery {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-      justify-content: center;
-    }
-
-    .gallery img {
-      width: 300px;
-      height: 200px;
-      object-fit: cover;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-    }
-
-    .jobs {
-      margin-top: 30px;
-    }
-
-    .job-card {
-      border: 1px solid #ccc;
-      padding: 15px;
-      margin-bottom: 15px;
-      border-radius: 8px;
-      background-color: #fdfdfd;
-    }
-
-    .job-card button {
-      background-color: #cc0000;
-      color: white;
-      border: none;
-      padding: 10px;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
     .footer {
       text-align: center;
       padding: 20px;
@@ -181,25 +221,60 @@
 </head>
 <body>
 
-  <div id="auth" class="auth-container">
-    <h2>Register</h2>
-    <input type="text" id="regUsername" placeholder="Username" />
-    <input type="password" id="regPassword" placeholder="Password" />
-    <button onclick="register()">Register</button>
+  <div id="authPage" class="auth-page">
+    <div class="tesla-logo-bar">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/e/e8/Tesla_logo.png" alt="Tesla Logo" />
+      <div class="company-name">TESLA COMPANY</div>
+    </div>
+    <div class="auth-choice">
+      <button onclick="showAuth('register')">Register Account</button>
+      <button onclick="showAuth('login')">Already Registered? Login</button>
+    </div>
 
-    <h2>Login</h2>
-    <input type="text" id="loginUsername" placeholder="Username" />
-    <input type="password" id="loginPassword" placeholder="Password" />
-    <button onclick="login()">Login</button>
+    <div id="regSection" class="auth-section active">
+      <h2>Register for Tesla Private Trading</h2>
+      <div id="regError" class="error-msg"></div>
+      <form onsubmit="event.preventDefault(); register();">
+        <label for="regFullName">Full Name</label>
+        <input type="text" id="regFullName" placeholder="Full Name" required />
+        <label for="regUsername">Username</label>
+        <input type="text" id="regUsername" placeholder="Username" required />
+        <label for="regEmail">Email</label>
+        <input type="email" id="regEmail" placeholder="Email" required />
+        <label for="regPhone">Phone</label>
+        <input type="tel" id="regPhone" placeholder="Phone Number" required />
+        <label for="regPassword">Password</label>
+        <input type="password" id="regPassword" placeholder="Password" required />
+        <label for="regReferral">Tesla Private Referral ID</label>
+        <input type="text" id="regReferral" placeholder="Referral ID" required />
+        <button type="submit">Register</button>
+      </form>
+    </div>
+
+    <div id="loginSection" class="auth-section">
+      <h2>Login to Your Tesla Account</h2>
+      <div id="loginError" class="error-msg"></div>
+      <form onsubmit="event.preventDefault(); login();">
+        <label for="loginUsername">Username</label>
+        <input type="text" id="loginUsername" placeholder="Username" required />
+        <label for="loginPassword">Password</label>
+        <input type="password" id="loginPassword" placeholder="Password" required />
+        <button type="submit">Login</button>
+      </form>
+    </div>
   </div>
 
   <div id="dashboard" style="display:none;">
+    <div class="tesla-logo-bar">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/e/e8/Tesla_logo.png" alt="Tesla Logo" />
+      <div class="company-name">TESLA COMPANY</div>
+    </div>
     <header>
-      <div>ðŸ‘¤ <span id="userDisplay"></span></div>
-      <div>ðŸ’° Balance: $10,000</div>
-      <div>ðŸ“¦ Orders: 5</div>
-      <div>ðŸ§° Jobs: 3</div>
-      <div>â­ Level: Pro</div>
+      <div>👤 <span id="userDisplay"></span></div>
+      <div>💰 Balance: $10,000</div>
+      <div>📦 Orders: 5</div>
+      <div>🧑‍💼 Jobs: 3</div>
+      <div>⭐ Level: Pro</div>
     </header>
 
     <div class="dashboard">
@@ -234,39 +309,173 @@
     </div>
 
     <div class="footer">
-      Tesla Licence Â®ï¸ 2025
+      Tesla Licence ® 2025
+    </div>
+  </div>
+
+  <!-- Spin Modal -->
+  <div id="spinModal" class="spin-modal">
+    <div class="spin-content">
+      <div class="spin-arrow">▲</div>
+      <div class="spin-wheel" id="spinWheel">
+        <!-- Wheel slices will be rendered here -->
+      </div>
+      <div class="spin-prize" id="spinPrize"></div>
+      <button id="spinBtn" onclick="spinTheWheel()">Spin</button>
     </div>
   </div>
 
   <script>
+    // In-memory "database" for demo (use backend for production!)
     let users = {};
+    let currentUser = null;
+    const TESLA_REF_ID = "962081";
+    const spinItems = [
+      "CYBER TRUCK",
+      "$50,000 BTC",
+      "WORKER LICENSE",
+      "TAX REFUND",
+      "$4,000 WEB3 TRADE COUPONS"
+    ];
 
+    // UI Switching
+    function showAuth(section) {
+      document.getElementById('regSection').classList.remove('active');
+      document.getElementById('loginSection').classList.remove('active');
+      if (section === 'register') {
+        document.getElementById('regSection').classList.add('active');
+      } else {
+        document.getElementById('loginSection').classList.add('active');
+      }
+      document.getElementById('regError').style.display = "none";
+      document.getElementById('loginError').style.display = "none";
+    }
+
+    // Registration
     function register() {
-      const username = document.getElementById("regUsername").value;
+      // Gather info
+      const fullName = document.getElementById("regFullName").value.trim();
+      const username = document.getElementById("regUsername").value.trim();
+      const email = document.getElementById("regEmail").value.trim().toLowerCase();
+      const phone = document.getElementById("regPhone").value.trim();
       const password = document.getElementById("regPassword").value;
-      if (username && password) {
-        users[username] = password;
-        alert("Registered successfully!");
-      } else {
-        alert("Please fill in both fields.");
+      const refID = document.getElementById("regReferral").value.trim();
+      const errorDiv = document.getElementById('regError');
+      errorDiv.style.display = 'none';
+
+      // Validate
+      if (!fullName || !username || !email || !phone || !password || !refID) {
+        errorDiv.textContent = "All fields are required.";
+        errorDiv.style.display = 'block';
+        return;
       }
+      if (refID !== TESLA_REF_ID) {
+        errorDiv.textContent = "TESLA IS A PRIVATE COMPANY. You need the special ID to register.";
+        errorDiv.style.display = 'block';
+        return;
+      }
+      if (users[username] || Object.values(users).some(u => u.email === email)) {
+        errorDiv.textContent = "This username or email has already been registered.";
+        errorDiv.style.display = 'block';
+        return;
+      }
+
+      // Save user (pretend DB)
+      users[username] = {
+        fullName, username, email, phone, password, refID
+      };
+      currentUser = users[username];
+
+      // Success - go to dashboard and spin modal
+      document.getElementById("authPage").style.display = "none";
+      document.getElementById("dashboard").style.display = "block";
+      updateDashboardUser();
+      showSpinModal();
     }
 
+    // Login
     function login() {
-      const username = document.getElementById("loginUsername").value;
+      const username = document.getElementById("loginUsername").value.trim();
       const password = document.getElementById("loginPassword").value;
-      if (users[username] === password) {
-        document.getElementById("auth").style.display = "none";
+      const errorDiv = document.getElementById('loginError');
+      errorDiv.style.display = 'none';
+
+      if (!username || !password) {
+        errorDiv.textContent = "Please enter both username and password.";
+        errorDiv.style.display = 'block';
+        return;
+      }
+      if (users[username] && users[username].password === password) {
+        currentUser = users[username];
+        document.getElementById("authPage").style.display = "none";
         document.getElementById("dashboard").style.display = "block";
-        document.getElementById("userDisplay").textContent = username;
+        updateDashboardUser();
+        showSpinModal();
       } else {
-        alert("Invalid login credentials.");
+        errorDiv.textContent = "Invalid login credentials.";
+        errorDiv.style.display = 'block';
       }
     }
 
+    function updateDashboardUser() {
+      document.getElementById("userDisplay").textContent =
+        `${currentUser.fullName} (${currentUser.username})`;
+    }
+
+    // Job Apply
     function applyJob() {
       window.open("https://wa.me/qr/W4BIEGPNPIZDH1", "_blank");
     }
+
+    // Spin Modal Logic
+    let spinIndex = 0;
+    let spinning = false;
+
+    function showSpinModal() {
+      spinIndex = 0;
+      spinning = false;
+      document.getElementById("spinModal").style.display = "flex";
+      document.getElementById("spinPrize").textContent = "";
+      document.getElementById("spinBtn").disabled = false;
+      renderWheel();
+    }
+
+    function spinTheWheel() {
+      if (spinning) return;
+      spinning = true;
+      document.getElementById("spinBtn").disabled = true;
+      // Simulate spinning by cycling items
+      let cycles = 12 + Math.floor(Math.random() * 4); // random-ish
+      let finalIndex = spinItems.length - 1; // Always land on Trade Coupons
+      let i = 0;
+
+      function animateSpin() {
+        let item = spinItems[i % spinItems.length];
+        document.getElementById("spinWheel").textContent = item;
+        i++;
+        if (i < cycles) {
+          setTimeout(animateSpin, 80 + i*8);
+        } else {
+          // Stop at final prize
+          document.getElementById("spinWheel").textContent = spinItems[finalIndex];
+          document.getElementById("spinPrize").textContent =
+            `$4,000 WEB3 TRADE COUPONS will be added to your TRADE ACCOUNT once you activate it.`;
+          setTimeout(() => {
+            document.getElementById("spinModal").style.display = "none";
+          }, 3500);
+        }
+      }
+      animateSpin();
+    }
+
+    function renderWheel() {
+      document.getElementById("spinWheel").textContent = spinItems[0];
+      document.getElementById("spinPrize").textContent = "Spin to win your welcome prize!";
+      document.getElementById("spinBtn").disabled = false;
+    }
+
+    // Show registration as default
+    showAuth('register');
   </script>
 </body>
 </html>
