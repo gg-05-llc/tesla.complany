@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tesla Stock Trading</title>
+
+  <!-- Tesla Logo Favicon & Home Screen Icon -->
+  <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/e/e8/Tesla_logo.png" type="image/png" />
+  <link rel="apple-touch-icon" href="https://upload.wikimedia.org/wikipedia/commons/e/e8/Tesla_logo.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Tesla Stock" />
+  <meta name="theme-color" content="#cc0000" />
+
+  <!-- Inline Manifest -->
+  <script type="application/json" id="inline-manifest">
+    {
+      "name": "Tesla Stock Trading",
+      "short_name": "TeslaTrade",
+      "start_url": ".",
+      "display": "standalone",
+      "background_color": "#ffffff",
+      "theme_color": "#cc0000",
+      "icons": [
+        {
+          "src": "https://upload.wikimedia.org/wikipedia/commons/e/e8/Tesla_logo.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        },
+        {
+          "src": "https://upload.wikimedia.org/wikipedia/commons/e/e8/Tesla_logo.png",
+          "sizes": "512x512",
+          "type": "image/png"
+        }
+      ]
+    }
+  </script>
+
+  <script>
+    // Inject manifest dynamically
+    const manifest = document.getElementById('inline-manifest').textContent;
+    const blob = new Blob([manifest], { type: 'application/json' });
+    const manifestURL = URL.createObjectURL(blob);
+    const link = document.createElement('link');
+    link.rel = 'manifest';
+    link.href = manifestURL;
+    document.head.appendChild(link);
+
+    // Register service worker
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('service-worker.js').catch(console.error);
+    }
+  </script>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #fff;
+      color: #333;
+    }
+
+    header {
+      background-color: #cc0000;
+      color: white;
+      padding: 15px;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      border-bottom: 4px solid #900;
+      font-weight: bold;
+    }
+
+    .auth-container {
+      max-width: 400px;
+      margin: 50px auto;
+      padding: 30px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background-color: #f9f9f9;
+    }
+
+    .auth-container h2 {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    .auth-container input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    .auth-container button {
+      width: 100%;
+      padding: 12px;
+      background-color: #cc0000;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .dashboard {
+      padding: 20px;
+    }
+
+    .banner {
+      background-color: #eee;
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 30px;
+      border: 2px solid #cc0000;
+      border-radius: 8px;
+    }
+
+    .banner h1 {
+      margin: 0;
+      font-size: 24px;
+      color: #cc0000;
+    }
+
+    .banner button {
+      margin-top: 15px;
+      padding: 12px 20px;
+      background-color: #cc0000;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .gallery {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      justify-content: center;
+    }
+
+    .gallery img {
+      width: 300px;
+      height: 200px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+    }
+
+    .jobs {
+      margin-top: 30px;
+    }
+
+    .job-card {
+      border: 1px solid #ccc;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      background-color: #fdfdfd;
+    }
+
+    .job-card button {
+      background-color: #cc0000;
+      color: white;
+      border: none;
+      padding: 10px;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 0.9em;
+      color: #666;
+      margin-top: 40px;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="auth" class="auth-container">
+    <h2>Register</h2>
+    <input type="text" id="regUsername" placeholder="Username" />
+    <input type="password" id="regPassword" placeholder="Password" />
+    <button onclick="register()">Register</button>
+
+    <h2>Login</h2>
+    <input type="text" id="loginUsername" placeholder="Username" />
+    <input type="password" id="loginPassword" placeholder="Password" />
+    <button onclick="login()">Login</button>
+  </div>
+
+  <div id="dashboard" style="display:none;">
+    <header>
+      <div>ðŸ‘¤ <span id="userDisplay"></span></div>
+      <div>ðŸ’° Balance: $10,000</div>
+      <div>ðŸ“¦ Orders: 5</div>
+      <div>ðŸ§° Jobs: 3</div>
+      <div>â­ Level: Pro</div>
+    </header>
+
+    <div class="dashboard">
+      <div class="banner">
+        <h1>Join Tesla Stock Trading to Earn $8,000 Weekly</h1>
+        <button onclick="window.open('https://web3autotrades.cc', '_blank')">Join Now</button>
+      </div>
+
+      <div class="gallery">
+        <img src="https://www.tesla.com/sites/default/files/modelsx-new/social/model-x-social.png" alt="Model X" />
+        <img src="https://www.tesla.com/sites/default/files/models3-new/social/model-3-social.png" alt="Model 3" />
+        <img src="https://www.tesla.com/sites/default/files/modely-new/social/model-y-social.png" alt="Model Y" />
+      </div>
+
+      <div class="jobs">
+        <div class="job-card">
+          <strong>Software Engineer</strong><br />
+          Salary: $120,000/year<br />
+          <button onclick="applyJob()">Apply</button>
+        </div>
+        <div class="job-card">
+          <strong>Battery Technician</strong><br />
+          Salary: $80,000/year<br />
+          <button onclick="applyJob()">Apply</button>
+        </div>
+        <div class="job-card">
+          <strong>Sales Executive</strong><br />
+          Salary: $70,000/year<br />
+          <button onclick="applyJob()">Apply</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="footer">
+      Tesla Licence Â®ï¸ 2025
+    </div>
+  </div>
+
+  <script>
+    let users = {};
+
+    function register() {
+      const username = document.getElementById("regUsername").value;
+      const password = document.getElementById("regPassword").value;
+      if (username && password) {
+        users[username] = password;
+        alert("Registered successfully!");
+      } else {
+        alert("Please fill in both fields.");
+      }
+    }
+
+    function login() {
+      const username = document.getElementById("loginUsername").value;
+      const password = document.getElementById("loginPassword").value;
+      if (users[username] === password) {
+        document.getElementById("auth").style.display = "none";
+        document.getElementById("dashboard").style.display = "block";
+        document.getElementById("userDisplay").textContent = username;
+      } else {
+        alert("Invalid login credentials.");
+      }
+    }
+
+    function applyJob() {
+      window.open("https://wa.me/qr/W4BIEGPNPIZDH1", "_blank");
+    }
+  </script>
+</body>
+</html>
