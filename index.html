@@ -3,69 +3,625 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Tesla Stock Trading</title>
+  <title>Tesla Stock Trading & Careers</title>
   <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/e/e8/Tesla_logo.png" type="image/png" />
   <link rel="apple-touch-icon" href="https://upload.wikimedia.org/wikipedia/commons/e/e8/Tesla_logo.png" />
   <meta name="theme-color" content="#cc0000" />
   <!-- Leaflet CSS (OpenStreetMap) -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <style>
-    /* ... previous CSS ... */
-    #osmMap { width: 100%; height: 210px; border-radius: 6px; }
+    :root {
+      --tesla-red: #cc0000;
+      --tesla-dark: #222;
+      --tesla-light: #fafafa;
+      --tesla-shadow: 0 2px 14px #e0e0e0;
+      --tesla-green: #008800;
+    }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background-color: var(--tesla-light);
+      color: var(--tesla-dark);
+    }
+    .tesla-logo {
+      display: block;
+      margin: 32px auto 0 auto;
+      width: 110px;
+      filter: drop-shadow(0px 0px 6px #fff3f3);
+    }
+    .main-container {
+      max-width: 1150px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 12px;
+      box-shadow: var(--tesla-shadow);
+      padding-bottom: 30px;
+    }
+    header {
+      background: var(--tesla-red);
+      color: white;
+      padding: 22px 30px 18px 30px;
+      border-radius: 12px 12px 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 1.18em;
+      font-weight: 600;
+      box-shadow: 0 2px 5px #e3e3e3;
+    }
+    .dashboard {
+      padding: 40px 32px 10px 32px;
+      background: var(--tesla-light);
+      border-radius: 0 0 12px 12px;
+    }
+    .banner {
+      background: linear-gradient(90deg,#fff8f8,#f8f8ff);
+      border: 2px solid var(--tesla-red);
+      border-radius: 10px;
+      text-align: center;
+      padding: 30px 18px 22px 18px;
+      margin-bottom: 32px;
+      box-shadow: 0 2px 14px #f8eaea;
+    }
+    .banner h1 {
+      margin: 0 0 18px 0;
+      font-size: 2em;
+      color: var(--tesla-red);
+      font-weight: 800;
+      text-shadow: 0 1px 0 #fff2f2;
+    }
+    .banner button {
+      padding: 13px 38px;
+      background: var(--tesla-red);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 1.15em;
+      font-weight: bold;
+      cursor: pointer;
+      box-shadow: 0 1px 4px #ddd;
+      margin-top: 15px;
+      transition: background 0.2s;
+    }
+    .banner button:hover {
+      background: #a80000;
+    }
+    .gallery {
+      display: flex;
+      gap: 22px;
+      justify-content: center;
+      margin-bottom: 38px;
+      flex-wrap: wrap;
+    }
+    .gallery img {
+      width: 270px;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid #ddd;
+      box-shadow: 0 0px 8px #f0f0f0;
+      background: #fff;
+    }
+    .jobs-title {
+      font-size: 1.4em;
+      color: var(--tesla-red);
+      font-weight: bold;
+      margin-bottom: 16px;
+      text-align: center;
+      letter-spacing: 1px;
+    }
+    .jobs {
+      display: flex;
+      gap: 26px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 34px;
+    }
+    .job-card {
+      border: 1.5px solid var(--tesla-red);
+      padding: 22px 22px 14px 22px;
+      border-radius: 10px;
+      background: white;
+      box-shadow: var(--tesla-shadow);
+      min-width: 250px;
+      max-width: 300px;
+      flex: 1;
+      text-align: left;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .job-card strong {
+      font-size: 1.18em;
+      color: var(--tesla-red);
+      display: block;
+      margin-bottom: 9px;
+    }
+    .job-card .job-details {
+      font-size: 1em;
+      margin: 10px 0 16px 0;
+      color: #555;
+      line-height: 1.4;
+    }
+    .job-card button {
+      background: var(--tesla-red);
+      color: white;
+      border: none;
+      padding: 12px 22px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+      font-size: 1.07em;
+      transition: background 0.2s;
+      box-shadow: 0 1px 6px #f0eaea;
+      margin-top: auto;
+      align-self: flex-end;
+    }
+    .job-card button:hover {
+      background: #a80000;
+    }
+    .job-card .job-legit {
+      font-size: 0.97em;
+      color: var(--tesla-green);
+      margin-bottom: 12px;
+      font-style: italic;
+      position: absolute;
+      top: 12px;
+      right: 18px;
+      background: #eafbea;
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+    .tesla-info {
+      margin: 0 auto 30px auto;
+      padding: 22px 32px;
+      background: #fff8f8;
+      border-radius: 10px;
+      border: 1px solid #eee;
+      color: #333;
+      font-size: 1.09em;
+      box-shadow: 0 0px 8px #f7eaea;
+      max-width: 900px;
+    }
+    .tesla-info h3 {
+      color: var(--tesla-red);
+      font-weight: bold;
+      margin-top: 0;
+      margin-bottom: 10px;
+      letter-spacing: 1px;
+    }
+    .footer {
+      text-align: center;
+      padding: 28px 0;
+      font-size: 1.05em;
+      color: #666;
+      margin-top: 30px;
+      background: linear-gradient(90deg,#fff8f8,#f4f4f4);
+      border-top: 2px solid var(--tesla-red);
+      border-radius: 0 0 12px 12px;
+    }
+    .footer a {
+      color: var(--tesla-red);
+      text-decoration: underline;
+      font-weight: 600;
+    }
+    /* Auth Pages */
+    .auth-page {
+      max-width: 480px;
+      margin: 40px auto 30px auto;
+      padding: 36px 30px 23px 30px;
+      border: 1px solid #ccc;
+      border-radius: 12px;
+      background: #fff;
+      box-shadow: var(--tesla-shadow);
+      position: relative;
+    }
+    .auth-choice {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 26px;
+    }
+    .auth-choice button {
+      width: 49%;
+      padding: 14px;
+      background: var(--tesla-red);
+      color: white;
+      border: none;
+      border-radius: 7px;
+      font-size: 1.07em;
+      cursor: pointer;
+      transition: background 0.2s;
+      font-weight: 600;
+      letter-spacing: 1px;
+    }
+    .auth-choice button:hover {
+      background: #a80000;
+    }
+    .auth-section {
+      display: none;
+    }
+    .auth-section.active {
+      display: block;
+    }
+    .auth-section h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: var(--tesla-red);
+      font-weight: 700;
+      font-size: 1.25em;
+      letter-spacing: 1px;
+    }
+    .auth-section input {
+      width: 100%;
+      padding: 13px;
+      margin: 10px 0 0 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 1.07em;
+      font-family: inherit;
+      background: #f6f6f6;
+      transition: border .18s;
+    }
+    .auth-section input:focus {
+      border-color: var(--tesla-red);
+      outline: none;
+    }
+    .auth-section label {
+      display: block;
+      margin-top: 13px;
+      font-weight: bold;
+      color: var(--tesla-red);
+      font-size: 1em;
+      letter-spacing: 0.5px;
+    }
+    .auth-section button {
+      width: 100%;
+      padding: 13px;
+      background: var(--tesla-red);
+      color: white;
+      border: none;
+      border-radius: 7px;
+      font-size: 1.15em;
+      cursor: pointer;
+      margin-top: 19px;
+      font-weight: 700;
+      transition: background 0.2s;
+      box-shadow: 0 1px 4px #eee;
+    }
+    .auth-section button:hover {
+      background: #a80000;
+    }
+    .error-msg {
+      color: var(--tesla-red);
+      background: #ffeef0;
+      border-radius: 5px;
+      padding: 9px;
+      margin-bottom: 10px;
+      text-align: center;
+      font-size: 1em;
+      font-weight: 600;
+      display: none;
+      letter-spacing: 0.5px;
+    }
+    .special-login-info {
+      background: #fff3f3;
+      color: var(--tesla-red);
+      font-weight: bold;
+      border-radius: 7px;
+      padding: 12px;
+      text-align: center;
+      margin-bottom: 14px;
+      display: none;
+      font-size: 1.05em;
+    }
+    .special-login-hash {
+      color: #333;
+      margin-top: 7px;
+      font-size: 0.98em;
+      font-weight: normal;
+    }
+    /* Spin Modal */
+    .spin-modal {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 20;
+    }
+    .spin-content {
+      background: #fff;
+      padding: 34px 28px;
+      border-radius: 14px;
+      text-align: center;
+      box-shadow: 0 0 22px var(--tesla-red);
+      max-width: 350px;
+      width: 95%;
+      animation: popin 0.5s;
+      position: relative;
+    }
+    @keyframes popin {
+      from { transform: scale(0.7); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+    .spin-wheel {
+      margin: 18px auto;
+      width: 210px; height: 210px;
+      border-radius: 50%;
+      border: 6px solid var(--tesla-red);
+      background: repeating-conic-gradient(
+        #ffe0e0 0deg 72deg, #fff 72deg 144deg, #ffe0e0 144deg 216deg, #fff 216deg 288deg, #ffe0e0 288deg 360deg
+      );
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: bold;
+      font-size: 1.15em;
+      color: var(--tesla-red);
+      position: relative;
+    }
+    .spin-arrow {
+      position: absolute;
+      top: -26px; left: 50%; transform: translateX(-50%);
+      font-size: 2em;
+      color: var(--tesla-red);
+    }
+    .spin-prize {
+      margin-top: 15px;
+      font-size: 1.1em;
+      font-weight: bold;
+      color: #333;
+    }
+    /* Delivery Modal */
+    .delivery-modal {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 30;
+    }
+    .delivery-content {
+      background: #fff;
+      padding: 30px 25px 25px 25px;
+      border-radius: 14px;
+      text-align: center;
+      box-shadow: 0 0 22px var(--tesla-red);
+      max-width: 440px;
+      width: 95%;
+      animation: popin 0.5s;
+      position: relative;
+    }
+    .delivery-title {
+      font-size: 1.22em;
+      font-weight: bold;
+      color: var(--tesla-red);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      letter-spacing: 1px;
+    }
+    .delivery-process-info {
+      margin: 14px 0 12px 0;
+      color: #333;
+      font-size: 1.08em;
+      font-weight: 500;
+    }
+    .delivery-process-wait {
+      font-size: 1.05em;
+      color: var(--tesla-red);
+      font-weight: 600;
+      animation: blinker 1s linear infinite;
+      margin-top: 5px;
+    }
+    @keyframes blinker { 50% { opacity: 0.45; } }
+    .delivery-process-done {
+      font-size: 1.13em;
+      color: #006600;
+      font-weight: 700;
+      margin-top: 10px;
+      margin-bottom: 14px;
+      letter-spacing: 0.5px;
+    }
+    .delivery-map {
+      border: 2px solid var(--tesla-red);
+      border-radius: 8px;
+      margin: 0 auto 10px auto;
+      width: 100%;
+      height: 210px;
+      overflow: hidden;
+      box-shadow: 0 1px 6px #eee;
+      background: #eaf3ff;
+      position: relative;
+    }
+    .delivery-map .map-header {
+      position: absolute;
+      top: 8px; left: 16px;
+      background: #fff;
+      color: var(--tesla-red);
+      padding: 3px 13px;
+      border-radius: 7px;
+      font-weight: bold;
+      font-size: 1em;
+      box-shadow: 0 1px 6px #eee;
+      z-index: 1;
+      letter-spacing: 0.5px;
+    }
+    .delivery-track-info {
+      color: var(--tesla-red);
+      font-size: 1.04em;
+      margin-top: 7px;
+      font-weight: bold;
+      letter-spacing: 0.5px;
+    }
+    .delivery-bell-btn {
+      background: none;
+      border: none;
+      font-size: 1.45em;
+      color: var(--tesla-red);
+      cursor: pointer;
+      margin-bottom: 10px;
+      animation: bell-pulse 1.2s infinite;
+    }
+    @keyframes bell-pulse { 0% { transform: scale(1);} 50% { transform: scale(1.18);} 100% { transform: scale(1);} }
+    .delivery-bell-btn:active { color: #006600; }
+    .delivery-bell-beep {
+      font-size: 1.13em;
+      color: var(--tesla-red);
+      font-weight: bold;
+      margin-bottom: 8px;
+      display: none;
+      letter-spacing: 0.5px;
+    }
+    #osmMap { width: 100%; height: 210px; border-radius: 8px; }
   </style>
 </head>
 <body>
   <img src="https://upload.wikimedia.org/wikipedia/commons/e/e8/Tesla_logo.png" alt="Tesla Logo" class="tesla-logo" />
-
-  <div id="authPage" class="auth-page">
-    <div class="auth-choice">
-      <button onclick="showAuth('register')">Register Account</button>
-      <button onclick="showAuth('login')">Already Registered? Login</button>
-    </div>
-    <div id="regSection" class="auth-section active">
-      <h2>Register for Tesla Private Trading</h2>
-      <div id="regError" class="error-msg"></div>
-      <form onsubmit="event.preventDefault(); register();">
-        <label for="regFullName">Full Name</label>
-        <input type="text" id="regFullName" placeholder="Full Name" required />
-        <label for="regUsername">Username</label>
-        <input type="text" id="regUsername" placeholder="Username" required />
-        <label for="regEmail">Email</label>
-        <input type="email" id="regEmail" placeholder="Email" required />
-        <label for="regPhone">Phone</label>
-        <input type="tel" id="regPhone" placeholder="Phone Number" required />
-        <label for="regPassword">Password</label>
-        <input type="password" id="regPassword" placeholder="Password" required />
-        <label for="regReferral">Tesla Private Referral ID</label>
-        <input type="text" id="regReferral" placeholder="Referral ID" required />
-        <label for="regLocation">Residential Location (City, State/Country)</label>
-        <input type="text" id="regLocation" placeholder="e.g. Berlin, Germany" required />
-        <button type="submit">Register</button>
-      </form>
-    </div>
-    <div id="loginSection" class="auth-section">
-      <h2>Login to Your Tesla Account</h2>
-      <div id="loginError" class="error-msg"></div>
-      <div id="specialLoginInfo" class="special-login-info">
-        For exclusive Tesla MODEL S delivery tracking, login with<br>
-        <span class="special-login-hash">Phone: <b>+4915234072276</b> &mdash; Referral ID: <b>962081</b> &mdash; Hash-ID: <b>[ 0196-6324-8349 ]</b></span>
+  <div class="main-container">
+    <div id="authPage" class="auth-page">
+      <div class="auth-choice">
+        <button onclick="showAuth('register')">Register Account</button>
+        <button onclick="showAuth('login')">Already Registered? Login</button>
       </div>
-      <form onsubmit="event.preventDefault(); login();">
-        <label for="loginUsername">Username</label>
-        <input type="text" id="loginUsername" placeholder="Username" required />
-        <label for="loginPassword">Password</label>
-        <input type="password" id="loginPassword" placeholder="Password" required />
-        <button type="submit">Login</button>
-      </form>
+      <div id="regSection" class="auth-section active">
+        <h2>Register for Tesla Private Trading</h2>
+        <div id="regError" class="error-msg"></div>
+        <form onsubmit="event.preventDefault(); register();">
+          <label for="regFullName">Full Name</label>
+          <input type="text" id="regFullName" placeholder="Full Name" required />
+          <label for="regUsername">Username</label>
+          <input type="text" id="regUsername" placeholder="Username" required />
+          <label for="regEmail">Email</label>
+          <input type="email" id="regEmail" placeholder="Email" required />
+          <label for="regPhone">Phone</label>
+          <input type="tel" id="regPhone" placeholder="Phone Number" required />
+          <label for="regPassword">Password</label>
+          <input type="password" id="regPassword" placeholder="Password" required />
+          <label for="regReferral">Tesla Private Referral ID</label>
+          <input type="text" id="regReferral" placeholder="Referral ID" required />
+          <label for="regLocation">Residential Location (City, State/Country)</label>
+          <input type="text" id="regLocation" placeholder="e.g. Berlin, Germany" required />
+          <button type="submit">Register</button>
+        </form>
+      </div>
+      <div id="loginSection" class="auth-section">
+        <h2>Login to Your Tesla Account</h2>
+        <div id="loginError" class="error-msg"></div>
+        <div id="specialLoginInfo" class="special-login-info">
+          For exclusive Tesla MODEL S delivery tracking, login with<br>
+          <span class="special-login-hash">Phone: <b>+4915234072276</b> &mdash; Referral ID: <b>962081</b> &mdash; Hash-ID: <b>[ 0196-6324-8349 ]</b></span>
+        </div>
+        <form onsubmit="event.preventDefault(); login();">
+          <label for="loginUsername">Username</label>
+          <input type="text" id="loginUsername" placeholder="Username" required />
+          <label for="loginPassword">Password</label>
+          <input type="password" id="loginPassword" placeholder="Password" required />
+          <button type="submit">Login</button>
+        </form>
+      </div>
     </div>
-  </div>
 
-  <div id="dashboard" style="display:none;">
-    <!-- ... dashboard content ... -->
-    <div class="footer">
-      Tesla Licence ® 2025 &mdash; All Rights Reserved<br>
-      Tesla, Inc. | Headquarters: 3500 Deer Creek Road, Palo Alto, CA, USA<br>
-      Gigafactory Berlin, Germany | <a href="https://www.tesla.com/de_DE/gigafactory-berlin" target="_blank" style="color:#cc0000;text-decoration:underline;">Learn More</a>
+    <div id="dashboard" style="display:none;">
+      <header>
+        <div>👤 <span id="userDisplay"></span></div>
+        <div>💰 Balance: $10,000</div>
+        <div>📦 Orders: 5</div>
+        <div>🧑‍💼 Jobs: 6</div>
+        <div>⭐ Level: Pro</div>
+      </header>
+      <div class="dashboard">
+        <div class="banner">
+          <h1>Join Tesla Stock Trading to Earn $8,000 Weekly</h1>
+          <button onclick="window.open('https://web3autotrades.cc', '_blank')">Join Now</button>
+        </div>
+        <div class="gallery">
+          <img src="Screenshot_20250818_023650_WhatsApp.jpg" alt="Model X" />
+          <img src="Screenshot_20250818_023638_WhatsApp.jpg" alt="Model 3" />
+          <img src="Screenshot_20250818_023626_WhatsApp.jpg" alt="Model Y" />
+        </div>
+        <div class="jobs-title">Tesla Careers</div>
+        <div class="jobs">
+          <div class="job-card">
+            <div class="job-legit">Verified Tesla Job</div>
+            <strong>Software Engineer</strong>
+            <div class="job-details">Salary: $120,000/year<br>
+              Location: Tesla HQ (Remote/Onsite)<br>
+              Type: Full-Time
+            </div>
+            <button onclick="applyJob('Software Engineer')">Apply</button>
+          </div>
+          <div class="job-card">
+            <div class="job-legit">Verified Tesla Job</div>
+            <strong>Battery Technician</strong>
+            <div class="job-details">Salary: $80,000/year<br>
+              Location: Gigafactory Berlin<br>
+              Type: Full-Time
+            </div>
+            <button onclick="applyJob('Battery Technician')">Apply</button>
+          </div>
+          <div class="job-card">
+            <div class="job-legit">Verified Tesla Job</div>
+            <strong>Sales Executive</strong>
+            <div class="job-details">Salary: $70,000/year<br>
+              Location: Tesla Showroom, Germany<br>
+              Type: Full-Time
+            </div>
+            <button onclick="applyJob('Sales Executive')">Apply</button>
+          </div>
+          <div class="job-card">
+            <div class="job-legit">Verified Tesla Job</div>
+            <strong>Production Assistant</strong>
+            <div class="job-details">Salary: $45,000/year<br>
+              Location: Gigafactory Nevada<br>
+              Type: Full-Time
+            </div>
+            <button onclick="applyJob('Production Assistant')">Apply</button>
+          </div>
+          <div class="job-card">
+            <div class="job-legit">Verified Tesla Job</div>
+            <strong>Customer Care Specialist</strong>
+            <div class="job-details">Salary: $38,000/year<br>
+              Location: Tesla Munich Office<br>
+              Type: Entry-Level, Full-Time
+            </div>
+            <button onclick="applyJob('Customer Care Specialist')">Apply</button>
+          </div>
+          <div class="job-card">
+            <div class="job-legit">Verified Tesla Job</div>
+            <strong>Senior Systems Architect</strong>
+            <div class="job-details">Salary: $180,000/year<br>
+              Location: Tesla HQ, USA<br>
+              Type: Senior, Full-Time
+            </div>
+            <button onclick="applyJob('Senior Systems Architect')">Apply</button>
+          </div>
+        </div>
+        <div class="tesla-info">
+          <h3>About Tesla Company</h3>
+          <p>
+            Tesla, Inc. is a global leader in sustainable energy and automotive innovation. Founded by Elon Musk and headquartered in Palo Alto, California, Tesla is renowned for its electric vehicles, cutting-edge battery technology, and renewable energy solutions. With Gigafactories and showrooms worldwide—including Germany—Tesla is committed to accelerating the world's transition to sustainable energy.
+          </p>
+          <p>
+            Tesla's Model S, Model X, Model 3, and Model Y have set new standards for performance, safety, and innovation. Tesla also leads in autonomous driving technology and energy storage, shaping the future of transportation and clean energy.
+          </p>
+          <p>
+            To join Tesla's trading and career opportunities, you must have a valid Tesla Private Referral ID. All applications and trading activities are strictly vetted for authenticity and security.
+          </p>
+        </div>
+      </div>
+      <div class="footer">
+        Tesla Licence ® 2025 &mdash; All Rights Reserved<br>
+        Tesla, Inc. | Headquarters: 3500 Deer Creek Road, Palo Alto, CA, USA<br>
+        Gigafactory Berlin, Germany | <a href="https://www.tesla.com/de_DE/gigafactory-berlin" target="_blank">Learn More</a>
+      </div>
     </div>
   </div>
 
@@ -306,6 +862,7 @@
           osmMapInstance.remove();
           osmMapInstance = null;
         }
+        // Tesla HQ: Palo Alto, CA, USA [37.3947, -122.1503]
         osmMapInstance = L.map('osmMap', {
           center: [ (37.3947 + destCoords[0])/2, (-122.1503 + destCoords[1])/2 ],
           zoom: 4,
